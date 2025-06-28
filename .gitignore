@@ -1,0 +1,54 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django specific
+*.log
+*.pot
+*.pyc
+db.sqlite3
+*.sqlite3
+/media/
+/staticfiles/
+/static/
+/*.py~
+
+# Local environment files
+.env
+*.env
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+env/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Testing
+.coverage
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+__snapshots__/
+
+# Deploying
+*.bak
+*.pid
+
+# Docker
+*.orig
+docker-compose.override.yml
+
+# nohup
+nohup.out
