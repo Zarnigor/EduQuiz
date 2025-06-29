@@ -28,7 +28,6 @@
 | **Quiz Poll UI**                           | Har savol Telegram’ning *Quiz Poll* formatida, to‘g‘ri javob yashirin         |
 | **Avtomatik baholash**                     | 10 ta javob yig‘iladi, ball hisoblanadi                                       |
 | **AI feedback**                            | Faqat xato javoblar bo‘yicha qisqa tushuntirish va tavsiyalar                 |
-| **Hech qanday markdown belgisiz feedback** | `parse_mode=HTML`: xatoliklar formatlanmaydi                                  |
 
 ---
 
