@@ -9,20 +9,17 @@ from feedback import analyze_and_feedback
 load_dotenv()
 client = Together(api_key=os.getenv("TOGETHER_API_KEY"))
 
-# ─── Sessiyalar lug‘ati (RAM) ─────────────────────────────
 users: dict[int, dict] = {}
 
-# ─── 1. /start → mavzuni so‘rash ──────────────────────────
 async def start_quiz(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     users[chat_id] = {}
     await update.message.reply_text("📚 Qaysi mavzuda test olmoqchisiz?")
 
-# ─── 2. Matn (mavzu) qabul qilish ─────────────────────────
 async def receive_topic(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
     text = update.message.text.strip()
-    users[chat_id] = {"subject": text}      # subject saqlaymiz
+    users[chat_id] = {"subject": text}     
 
     keyboard = InlineKeyboardMarkup([[
         InlineKeyboardButton("🟢 Oson", callback_data="oson"),
@@ -35,7 +32,6 @@ async def receive_topic(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=keyboard,
     )
 
-# ─── 3. Tugma bosilib, daraja qabul qilish ────────────────
 async def receive_difficulty(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     await query.answer()
@@ -44,11 +40,11 @@ async def receive_difficulty(update: Update, context: ContextTypes.DEFAULT_TYPE)
     diff = query.data                          # 'oson' | 'o‘rta' | 'qiyin'
     subject = users.get(chat_id, {}).get("subject")
 
-    if not subject:                            # xavfsizlik uchun
+    if not subject:                            
         await query.message.reply_text("Avval test mavzusini yuboring. /start bilan boshlaymiz.")
         return
 
-    await query.edit_message_reply_markup()    # tugmalarni yashirish
+    await query.edit_message_reply_markup()    
     await query.message.reply_text("🔄 Savollar tayyorlanmoqda…")
 
     q, c = await generate_quiz(subject, diff)  # AI dan savollar
@@ -61,7 +57,6 @@ async def receive_difficulty(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
     await send_poll_question(query.message.chat, context)
 
-# ─── 4. AI savollarni yaratish ────────────────────────────
 async def generate_quiz(subject: str, difficulty: str):
     prompt = (
         f"Menga {subject} bo‘yicha {difficulty} darajada 10 ta test savol tuzib ber. "
@@ -86,7 +81,6 @@ async def generate_quiz(subject: str, difficulty: str):
     return questions, correct
 
 
-# ─── 5. Poll savolini yuborish ────────────────────────────
 async def send_poll_question(chat, context: ContextTypes.DEFAULT_TYPE):
     chat_id = chat.id
     i = users[chat_id]["current"]
@@ -109,7 +103,6 @@ async def send_poll_question(chat, context: ContextTypes.DEFAULT_TYPE):
     context.bot_data[poll.poll.id] = {"chat_id": chat_id}
     users[chat_id]["current"] += 1
 
-# ─── 6. Poll javobini qabul qilish ───────────────────────
 async def handle_poll_answer(update: Update, context: ContextTypes.DEFAULT_TYPE):
     poll_id = update.poll_answer.poll_id
     chat_id = context.bot_data[poll_id]["chat_id"]
@@ -124,7 +117,6 @@ async def handle_poll_answer(update: Update, context: ContextTypes.DEFAULT_TYPE)
         chat = await context.bot.get_chat(chat_id)
         await analyze_and_feedback(chat, users[chat_id], context)
 
-# ─── Eksport ──────────────────────────────────────────────
 __all__ = [
     "start_quiz",
     "receive_topic",
